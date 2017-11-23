@@ -16,6 +16,25 @@ namespace Сплайны
         {
             InitializeComponent();
         }
+        double[] s(double[] fx, double[] x, double[] m, double[] X, double h)
+        {
+            double[] temp = new double[X.Length];
+
+            int n = fx.Length;
+            int k = (X.Length - 1)/(n-1);
+
+            double t;
+            for (int i = 0; i < n - 1; i++)
+            {
+                for (int j = 0; j < k; j++)
+                {
+                    t = (X[i * k + j] - x[i]) / h;
+                    temp[i * k + j] = fx[i] * f1(t) + fx[i + 1] * f2(t) + m[i] * h * f3(t) + m[i + 1] * h * f4(t);
+                }
+            }
+            temp[(n - 1) * k] = fx[n - 1] * f1(0) + m[n - 1] * h * f3(0);
+            return temp;
+        }
         double f1(double t)
         {
             return (t - 1) * (t - 1) * (2 * t + 1);
@@ -32,6 +51,7 @@ namespace Сплайны
         {
             return -t * t * (1 - t);
         }
+        
         double f(double x)
         {
             return x*Math.Exp(-x);
@@ -65,29 +85,22 @@ namespace Сплайны
             double a = 0;
             double b = 2;
             double h = (b - a) / (n - 1);
-            /********************************************/
-
-
+            /******************************************/
+            
             double[] x = FillMass(n, a, b);
             double[] fx = FillMass(x);
-            double[] m = Sweep_method.Sweep(fx,a, b, n, h);
+
+            /* Вычисление первых производных */
+            double dfa = (fx[1] - fx[0]) / h;
+            double dfb = (fx[fx.Length - 1] - fx[fx.Length - 2]) / h;
+            /********************************/
+
+            double[] m = Sweep_method.Sweep(fx, dfa, dfb, n, h);
 
             int N = 501;        // Количество точек сплайна
             int k = (N - 1) / (n - 1); // Количество точек между x[i] и x[i+1]
-
-            double[] S = new double[N];
             double[] X = FillMass(N, a, b);
-
-            double t;
-            for (int i = 0; i < n-1; i++)
-            {
-                for (int j = 0; j < k; j++)
-                {
-                    t = (X[i*k + j] - x[i]) / h;
-                    S[i*k + j] = fx[i] * f1(t) + fx[i + 1] * f2(t) + m[i] * h * f3(t) + m[i + 1] * h * f4(t);
-                }
-            }
-            S[(n - 1) * k] = fx[n-1] * f1(0) + m[n-1] * h * f3(0);
+            double[] S = s(fx, x, m, X, h);
 
             for (int i = 0; i < N; i++)
             {
@@ -100,6 +113,11 @@ namespace Сплайны
                 temp = a + i*0.01;
                 chart1.Series[1].Points.AddXY(temp, f(temp));
             }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
