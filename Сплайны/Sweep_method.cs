@@ -25,14 +25,6 @@ namespace Сплайны
         { }
         private static void Fill(double[] f, double fa, double fb)
         {
-            for (int i = 1; i < n-1; i++)
-            {
-                a[i] = 4;
-                b[i] = 1;
-                c[i] = 1;
-                d[i] = 3/h * (f[i+1]-f[i-1]);
-            }
-
             a[0] = 1;
             b[0] = 0;
             c[0] = 0;
@@ -42,6 +34,15 @@ namespace Сплайны
             b[n - 1] = 0;
             c[n - 1] = 0;
             d[n - 1] = fb;
+
+            for (int i = 1; i < n-1; i++)
+            {
+                a[i] = 4;
+                b[i] = 1;
+                c[i] = 1;
+                d[i] = 6.0 / (h*h) * (f[i+1] - 2*f[i] + f[i-1]); // для второй производной
+                //d[i] = 3.0 / h * (f[i + 1] - f[i - 1]); // для второй производной
+            }
         }
         public static double[] Sweep(double[] fx, double dfa, double dfb, int nn, double hh)
         {
