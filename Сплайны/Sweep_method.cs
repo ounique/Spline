@@ -23,14 +23,6 @@ namespace Сплайны
 
         public Sweep_method()
         { }
-        static double func(double x)
-        {
-            return x*Math.Exp(-x);
-        }
-        static double df(double x)
-        {
-            return Math.Exp(-x) - x*Math.Exp(-x);
-        }
         private static void Fill(double[] f, double fa, double fb)
         {
             for (int i = 1; i < n-1; i++)
@@ -51,10 +43,13 @@ namespace Сплайны
             c[n - 1] = 0;
             d[n - 1] = fb;
         }
-        public static double[] Sweep(double[] fx, double dfa, double dfb, int nn, double hh)
+        public static double[] Sweep(double[] fx, double A, double B, int nn, double hh)
         {
             n = nn;
             h = hh;
+
+            double dfa = (fx[1]-fx[0]) / hh;
+            double dfb = (fx[fx.Length-1] - fx[fx.Length-2]) / hh;
 
             a = new double[n]; b = new double[n]; u = new double[n];
             c = new double[n]; d = new double[n]; v = new double[n];
